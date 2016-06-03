@@ -12,12 +12,13 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
     private static final String CREATE_TABLE_WEATHER_SQL =
             "create table weather(" +
-            "city text primary key autoincrement," +
+            "city text not null," +
             "date text not null," +
             "weather text not null," +
             "temperature text not null," +
             "icon_left integer," +
-            "icon_right integer)" ;
+            "icon_right integer," +
+            "view text not null)";
 
 
 
@@ -29,7 +30,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_WEATHER_SQL);
-        Log.v("databaseHelper", "开始构造数据库");
+
     }
 
     // 升级
@@ -37,6 +38,5 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS weather");
         onCreate(db);
-        Log.v("databaseHelper","开始构造数据库");
     }
 }

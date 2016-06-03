@@ -1,6 +1,7 @@
 package com.xhy.entity;
 
 /**
+ * 用于封装天气信息的类
  * Created by change100 on 2016/5/31.
  */
 public class Weather {

@@ -131,11 +131,9 @@ public class WeatherAnalysis extends Thread{
     public void run() {
 
         // 获取远程Web Service返回的对象
-        Log.v("234", "aa");
         detail = WeatherService.getWeatherByCity(city);
         if(detail != null) {
             showWeather();
-            //show();
             Log.i("bb", weatherToday);
             Message msg = new Message();
             msg.what = 0x0003;

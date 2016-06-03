@@ -1,6 +1,7 @@
 package com.xhy.entity;
 
 /**
+ * 用于封装数据库信息的类
  * Created by change100 on 2016/6/3.
  */
 public class WeatherDB {
@@ -10,18 +11,25 @@ public class WeatherDB {
     private String temperature;
     private int icon_left;
     private int icon_right;
+    private String view;
 
     public WeatherDB() {
 
     }
 
 
-    public WeatherDB(String city,String date, String weather, String temperature, int icon_left, int icon_right) {
+    public WeatherDB(String city,
+                     String date,
+                     String weather,
+                     String temperature, int icon_left, int icon_right,String view) {
+        this.city = city;
         this.date = date;
         this.weather = weather;
         this.temperature = temperature;
         this.icon_left = icon_left;
         this.icon_right = icon_right;
+        this.view = view;
+
     }
 
     public String getCity() {
@@ -70,5 +78,12 @@ public class WeatherDB {
 
     public void setTemperature(String temperature) {
         this.temperature = temperature;
+    }
+    public String getView() {
+        return view;
+    }
+
+    public void setView(String view) {
+        this.view = view;
     }
 }

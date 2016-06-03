@@ -29,7 +29,9 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.xhy.Adapter.WeaAdapter;
 import com.xhy.Thread.ThreadCitys;
 import com.xhy.Thread.ThreadProvinces;
+import com.xhy.dao.WeatherDao;
 import com.xhy.entity.Weather;
+import com.xhy.entity.WeatherDB;
 import com.xhy.tool.IconChange;
 import com.xhy.tool.WeatherAnalysis;
 import com.xhy.tool.WeatherService;
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
     //Preferece机制的操作模式
     public static int MODE = Context.MODE_PRIVATE;
 
+    // 操作数据库的类
+    private WeatherDao weatherDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,9 +108,15 @@ public class MainActivity extends AppCompatActivity {
         listView_add = (ImageView) findViewById(R.id.imageView_loc);
 
         judgeHaveNet();
+        openDB();
         initData();
 
 
+    }
+
+    private void openDB() {
+        weatherDao = new WeatherDao(MainActivity.this);
+        weatherDao.open();
     }
 
     /**
@@ -117,8 +128,9 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo info = manager.getActiveNetworkInfo();
         if (info == null || !manager.getBackgroundDataSetting()) {
             isHaveNet = false;
+        } else {
+            isHaveNet = true;
         }
-        isHaveNet = true;
 
 
     }
@@ -133,18 +145,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     /**
      * 初始化数据并建立Handler接收数据
      */
     private void initData() {
+
+        Intent intent = getIntent();
+        String cityName = intent.getStringExtra("cityName");
+
+        if(cityName != null){
+            city = cityName;
+        }
         if(isHaveNet) {
-
-            Intent intent = getIntent();
-            String cityName = intent.getStringExtra("cityName");
-
-            if(cityName != null){
-                city = cityName;
-            }
 
             //运行子线程获取数据
             ThreadProvinces threadProvinces = new ThreadProvinces();
@@ -162,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < StrProvinces.length; i++) {
                                 String[] s = StrProvinces[i].split(",");
                                 StrProvinces[i] = s[0];
-                                Log.v(i + "", "cc");
+                                Log.v("aa",i + "");
                                 Log.v(StrProvinces[i], "aa");
                             }
                             break;
@@ -195,11 +209,39 @@ public class MainActivity extends AppCompatActivity {
             listView_add.setEnabled(true);
             initListView();
         } else {
-            
-            Toast.makeText(MainActivity.this, "网络不可连接", Toast.LENGTH_SHORT).show();
+
+            initDB();
+
         }
 
 }
+
+    private void initDB() {
+        Log.v("aa","开始执行initDB");
+        tv_1.setText(city);
+        data = new ArrayList<>();
+        WeatherDB[] wdb = weatherDao.showOneWeather(city);
+        String s = null;
+        if(wdb != null) {
+
+            for(int i=0;i<wdb.length;i++) {
+                WeatherDB w = wdb[i];
+
+                data.add(new Weather(w.getDate(), w.getWeather(), w.getTemperature(),
+                        w.getIcon_left(), w.getIcon_right()));
+                Log.v("aa", w.getDate());
+                s = w.getView();
+
+            }
+            weaAdapter = new WeaAdapter(data, MainActivity.this);
+            listView_weather.setAdapter(weaAdapter);
+            UpdateWeatherView(StringGetNum(s));
+
+        } else {
+            Toast.makeText(MainActivity.this, "数据里没有该城市的天气信息", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
     /**
@@ -245,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else {
+            initDB();
             Toast.makeText(MainActivity.this, "网络不可连接", Toast.LENGTH_SHORT).show();
         }
     }
@@ -316,7 +359,25 @@ public class MainActivity extends AppCompatActivity {
                 +weatherAfterdays[2]+"/"+weatherAfterday2s[2]+"/"+weatherAfterday3s[2];
 
         UpdateWeatherView(StringGetNum(s));
+
+
+        if(weatherDao.checkData(city)) {
+            weatherDao.deleteOneWeather(city);
+        }
+        WeatherDB weatherDBToday = new WeatherDB(city,weatherTodays[0], weatherTodays[1], weatherTodays[2],
+                    ic.parseIcon(weatherTodays[3]), ic.parseIcon(weatherTodays[4]),s);
+        WeatherDB weatherDBTomorrow = new WeatherDB(city,weatherTomorrows[0], weatherTomorrows[1], weatherTomorrows[2],
+                    ic.parseIcon(weatherTomorrows[3]), ic.parseIcon(weatherTomorrows[4]),s);
+        WeatherDB weatherDBAfterday = new WeatherDB(city,weatherAfterdays[0], weatherAfterdays[1], weatherAfterdays[2],
+                    ic.parseIcon(weatherAfterdays[3]), ic.parseIcon(weatherAfterdays[4]),s);
+        weatherDao.addWeatherDB(weatherDBToday);
+        weatherDao.addWeatherDB(weatherDBTomorrow);
+        weatherDao.addWeatherDB(weatherDBAfterday);
+
+
     }
+
+
 
 
     /**
