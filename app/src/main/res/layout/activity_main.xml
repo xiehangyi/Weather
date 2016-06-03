@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.xhy.weather.MainActivity">
+
+
+
+    <ImageView
+        android:id="@+id/imageView_loc"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:onClick="imageViewLoc"
+        android:src="@drawable/ic_location_on_24dp"
+        android:layout_marginTop="20dp"
+        android:saveEnabled="false"
+        android:layout_gravity="center_horizontal"
+        />
+
+
+
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="长沙"
+        android:textColor="#7a9a6a"
+        android:textSize="30sp" />
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView_weather"
+        />
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </com.github.mikephil.charting.charts.LineChart>
+
+
+</LinearLayout>
